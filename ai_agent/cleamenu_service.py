@@ -20,6 +20,7 @@ load_dotenv()
 
 # LLM Initialization
 openai_api_key = os.getenv("OPENAI_API_KEY")
+cleamenu_data_service_url = os.getenv("CLEAMENU_DATA_SERVICE_URL")
 llm = ChatOpenAI(max_retries=3, temperature=0,  # type: ignore
                  model_name="gpt-4")
 
@@ -34,7 +35,7 @@ index = pinecone.Index(INDEX_NAME)
 
 
 def update_price_api(storeId: str, itemId: str, new_price: float):
-    url = f"http://localhost:8000/{storeId}/items/{itemId}"
+    url = f"{cleamenu_data_service_url}/{storeId}/items/{itemId}"
     # Create your header as required
     payload = {"price" : new_price}
     headers = {"content-type": "application/json"}
