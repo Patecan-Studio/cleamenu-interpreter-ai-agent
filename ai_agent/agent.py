@@ -11,7 +11,7 @@ from ai_agent.cleamenu_tools import food_tools
 # LLM Initialization
 openai_api_key = os.getenv("OPENAI_API_KEY")
 llm = ChatOpenAI(max_retries=10, temperature=0,  # type: ignore
-                 model_name="gpt-4")
+                 model_name="gpt-4o")
 
 
 def initialize_agent_zero_shot(tools: List, is_agent_verbose: bool = True, max_iterations: int = 10, return_thought_process: bool = False):

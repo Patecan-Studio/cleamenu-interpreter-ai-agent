@@ -1,11 +1,11 @@
 import requests
 from dotenv import load_dotenv
+from llama_index.core import VectorStoreIndex
 
-from llama_index.legacy.vector_stores import PineconeVectorStore, MetadataFilters, MetadataFilter
+from llama_index.core.vector_stores import MetadataFilters, MetadataFilter
+from llama_index.vector_stores.pinecone import PineconeVectorStore
 from pinecone import Pinecone, ServerlessSpec
 from llama_index.llms.openai import OpenAI
-from llama_index.legacy import VectorStoreIndex
-from langchain_community.chat_models import ChatOpenAI
 
 import os
 import json
@@ -21,8 +21,7 @@ load_dotenv()
 # LLM Initialization
 openai_api_key = os.getenv("OPENAI_API_KEY")
 cleamenu_data_service_url = os.getenv("CLEAMENU_DATA_SERVICE_URL")
-llm = ChatOpenAI(max_retries=3, temperature=0,  # type: ignore
-                 model_name="gpt-4")
+llm = OpenAI(model="gpt-4o")
 
 pinecone = Pinecone(api_key=PINECONE_API_KEY)
 openai_client = OpenAI(api_key=OPENAI_API_KEY)
@@ -73,14 +72,16 @@ def vector_query(store_id: str, query: str):
         ],
     )
     query_engine = vector_index.as_query_engine(filters=filters, include_metadata=True, include_values=False)
+    chat_engine = vector_index.as_chat_engine(llm=llm, filters=filters, include_metadata=True)
 
+
+    #response = chat_engine.chat(query)
     response = query_engine.query(query)
     print(response)
+    print(response.metadata)
     return response.metadata
 
 
-#vector_query("abc","quán nào có món Chả, mà được làm từ Tôm?")
-#vector_query("abc","quán nào có món Chả Tôm?")
 
 
 def update_price_of_existed_food(store_id: str, food_id: str, food_price: float):
